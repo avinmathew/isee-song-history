@@ -1,4 +1,6 @@
-const spreadsheetUrl = 'https://spreadsheets.google.com/feeds/list/15sEuDqyqvvCVB2zs9A3BMhb4XtDvSM-BwZTJpRnNJVo/od6/public/values?alt=json'
+const id = '15sEuDqyqvvCVB2zs9A3BMhb4XtDvSM-BwZTJpRnNJVo';
+const gid = '0';
+const spreadsheetUrl = 'https://docs.google.com/spreadsheets/d/'+id+'/gviz/tq?tqx=out:json&tq&gid='+gid;
 
 let performances;
 let songs;
@@ -110,15 +112,17 @@ function renderSongTimeline() {
 fetch(spreadsheetUrl)
   .then(response => {
     if (response.ok) {
-      response.json().then(data => {
+      response.text().then(data => {
+        data = data.substring(47).slice(0, -2);
+        data = JSON.parse(data);
         // Transform Google Sheets data structure
-        const rows = data.feed.entry.map(row => {
+        const rows = data.table.rows.map(row => {
           return {
-            date: new Date(row['gsx$date']['$t']),
-            song: row['gsx$song']['$t'],
-            version: row['gsx$version']['$t'],
-            worshipLeader: row['gsx$worshipleader']['$t'],
-            key: row['gsx$key']['$t']
+            date: new Date(row.c[0].f),
+            song: row.c[1].v,
+            version: row.c[2].v,
+            worshipLeader: row.c[3]?.v,
+            key: row.c[4]?.v
           }
         });
         performances = rows;

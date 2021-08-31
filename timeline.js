@@ -27,8 +27,6 @@ svg.append('g')
       )
   );
 
-const t = d3.transition().duration(1000);
-
 function addCircles(data) {
   svg.selectAll('circle')
     .data(data)
@@ -39,12 +37,9 @@ function addCircles(data) {
         .attr('r', 5)
         .style('fill', '#DD0332')
         .style('fill-opacity', 0)
-        .transition(t)
         .style('fill-opacity', 1),
-      update => update.transition(t)
-        .attr('cx', date => x(date)),
-      exit => exit.transition(t)
-                  .style('fill-opacity', 0)
+      update => update.attr('cx', date => x(date)),
+      exit => exit.style('fill-opacity', 0)
                   .remove()
     )
 }
